@@ -4,21 +4,18 @@ import random
 BIT_WIDTH = 8
 MATRIX_SIZE = 2
 
-def matrix_multiplier():
-    A = [[pyrtl.Input(BIT_WIDTH, f"a{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
-    B = [[pyrtl.Input(BIT_WIDTH, f"b{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
-    C = [[pyrtl.Output(BIT_WIDTH * 2 + 1, f"c{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
+A = [[pyrtl.Input(BIT_WIDTH, f"a{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
+B = [[pyrtl.Input(BIT_WIDTH, f"b{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
+C = [[pyrtl.Output(BIT_WIDTH * 2 + 1, f"c{i}{j}") for j in range(MATRIX_SIZE)] for i in range(MATRIX_SIZE)]
 
-    for i in range(MATRIX_SIZE):
-        for j in range(MATRIX_SIZE):
-            products = []
-            for k in range(MATRIX_SIZE):
-                mult_res = A[i][k] * B[k][j]
-                products.append(mult_res)
-            
-            C[i][j] <<= sum(products)
-
-matrix_multiplier()
+for i in range(MATRIX_SIZE):
+    for j in range(MATRIX_SIZE):
+        products = []
+        for k in range(MATRIX_SIZE):
+            mult_res = A[i][k] * B[k][j]
+            products.append(mult_res)
+        
+        C[i][j] <<= sum(products)
 
 sim = pyrtl.Simulation()
 
@@ -32,9 +29,17 @@ for i in range(50):
         "b00": r(), "b01": r(),
         "b10": r(), "b11": r()
     }
+    # sim_inputs = {
+    #     "a00": 1, "a01": 2,
+    #     "a10": 3, "a11": 4,
+    #     "b00": 5, "b01": 6,
+    #     "b10": 7, "b11": 8
+    # }
     sim.step(sim_inputs)
     
     for i in range(MATRIX_SIZE):
         row = [sim.inspect(f"c{i}{j}") for j in range(MATRIX_SIZE)]
         print(row)
     print("\n")
+
+print("program done")
